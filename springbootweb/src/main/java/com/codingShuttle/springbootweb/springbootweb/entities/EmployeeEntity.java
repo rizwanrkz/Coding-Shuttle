@@ -22,7 +22,7 @@ public class EmployeeEntity {
     private String email;
     private Integer age;
     private LocalDate dateOfJoining;
-    private Boolean isAcative;
+    private Boolean isActive;
 
 
 }

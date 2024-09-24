@@ -2,26 +2,26 @@ package com.codingShuttle.springbootweb.springbootweb.dto;
 
 import java.time.LocalDate;
 
-public class EmpolyeeDTO {
+public class EmployeeDTO {
 
     private Long id;
     private String name;
     private String email;
     private Integer age;
     private LocalDate dateOfJoining;
-    private Boolean isAcative;
+    private Boolean isActive;
 
-    public EmpolyeeDTO(){
+    public EmployeeDTO(){
 
     }
 
-    public EmpolyeeDTO(Long id, String name, String email, Integer age, LocalDate dateOfJoining, Boolean isActive) {
+    public EmployeeDTO(Long id, String name, String email, Integer age, LocalDate dateOfJoining, Boolean isActive) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.age = age;
         this.dateOfJoining = dateOfJoining;
-        this.isAcative = isActive;
+        this.isActive = isActive;
     }
 
 
@@ -58,11 +58,11 @@ public class EmpolyeeDTO {
     }
 
     public  boolean getIsActive(){
-        return isAcative;
+        return isActive;
     }
 
-    public void setIsActive(Boolean isAcative){
-        this.isAcative = isAcative;
+    public void setIsActive(Boolean isActive){
+        this.isActive = isActive;
     }
 
 
