@@ -50,7 +50,7 @@ public class EmployeeDTO {
     @AssertTrue(message = "employee should be active")
     private Boolean isActive;
 
-    public EmployeeDTO(){
+    /*public EmployeeDTO(){
 
     }
 
@@ -61,7 +61,7 @@ public class EmployeeDTO {
         this.age = age;
         this.dateOfJoining = dateOfJoining;
         this.isActive = isActive;
-    }
+    }*/
 
 
     public Long getId(){

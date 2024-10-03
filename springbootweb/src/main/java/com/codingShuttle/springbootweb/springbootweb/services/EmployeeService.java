@@ -2,6 +2,7 @@ package com.codingShuttle.springbootweb.springbootweb.services;
 
 import com.codingShuttle.springbootweb.springbootweb.dto.EmployeeDTO;
 import com.codingShuttle.springbootweb.springbootweb.entities.EmployeeEntity;
+import com.codingShuttle.springbootweb.springbootweb.exceptions.ResourceNotFoundException;
 import com.codingShuttle.springbootweb.springbootweb.repositories.EmployeeRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.util.ReflectionUtils;
@@ -47,6 +48,7 @@ public class EmployeeService {
     }
 
     public EmployeeDTO updateEmployeeById(EmployeeDTO employeeDTO, Long employeeId) {
+        isExistsByEmployeeId(employeeId);
         EmployeeEntity employeeEntity = modelMapper.map(employeeDTO, EmployeeEntity.class);
         employeeEntity.setId(employeeId);
         EmployeeEntity savedEmployeeEntity = employeeRepository.save(employeeEntity);
@@ -54,15 +56,13 @@ public class EmployeeService {
     }
 
     public boolean deleteEmployeeById(Long employeeId) {
-        boolean exists = isExistsByEmployeeId(employeeId);
-        if(!exists) return false;
+        isExistsByEmployeeId(employeeId);
         employeeRepository.deleteById(employeeId);
         return true;
     }
 
     public EmployeeDTO patchEmployeeById(Map<String, Object> updates, Long employeeId) {
-        boolean exists = isExistsByEmployeeId(employeeId);
-        if(!exists) return null;
+        isExistsByEmployeeId(employeeId);
          EmployeeEntity employeeEntity = employeeRepository.findById(employeeId).get();
          updates.forEach((field, value) -> {
              Field fieldToBeUpdated = ReflectionUtils.findRequiredField(EmployeeEntity.class, field);
@@ -72,7 +72,8 @@ public class EmployeeService {
          return modelMapper.map(employeeRepository.save(employeeEntity), EmployeeDTO.class);
     }
 
-    public boolean isExistsByEmployeeId(Long employeeId){
-        return employeeRepository.existsById(employeeId);
+    public void isExistsByEmployeeId(Long employeeId){
+        boolean exists = employeeRepository.existsById(employeeId);
+        if(!exists) throw new ResourceNotFoundException("Employee not found with id: "+employeeId);
     }
 }
