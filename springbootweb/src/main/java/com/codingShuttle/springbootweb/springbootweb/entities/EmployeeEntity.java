@@ -22,7 +22,16 @@ public class EmployeeEntity {
     private String email;
     private Integer age;
     private LocalDate dateOfJoining;
-    private Boolean isAcative;
+    private Boolean isActive;
+    private String role;
+    private Double salary;
 
+    public Long getId(){
+        return id;
+    }
+
+    public void setId(Long id){
+        this.id = id;
+    }
 
 }

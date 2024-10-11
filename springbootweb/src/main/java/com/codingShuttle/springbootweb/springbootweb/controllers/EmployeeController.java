@@ -1,22 +1,28 @@
 package com.codingShuttle.springbootweb.springbootweb.controllers;
 
-import com.codingShuttle.springbootweb.springbootweb.dto.EmpolyeeDTO;
-import com.codingShuttle.springbootweb.springbootweb.entities.EmployeeEntity;
-import com.codingShuttle.springbootweb.springbootweb.repositories.EmployeeRepository;
+import com.codingShuttle.springbootweb.springbootweb.dto.EmployeeDTO;
+import com.codingShuttle.springbootweb.springbootweb.exceptions.ResourceNotFoundException;
+import com.codingShuttle.springbootweb.springbootweb.services.EmployeeService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 
 @RestController
 @RequestMapping("/employees") //Parent path
 public class EmployeeController {
 
-    private final EmployeeRepository employeeRepository;
+    private final EmployeeService employeeService;
 
-    public EmployeeController(EmployeeRepository employeeRepository) {
-        this.employeeRepository = employeeRepository;
+    public EmployeeController(EmployeeService employeeService) {
+
+        this.employeeService = employeeService;
     }
 
 
@@ -26,13 +32,15 @@ public class EmployeeController {
     }
 
     @GetMapping(path = "/{employeeId}")
-    public EmployeeEntity getEmployeeById(@PathVariable(name = "employeeId") Long id){
-        return employeeRepository.findById(id).orElse(null);
+    public ResponseEntity<EmployeeDTO> getEmployeeById(@PathVariable(name = "employeeId") Long id){
+        Optional<EmployeeDTO> employeeDTO = employeeService.getEmployeeById(id);
+        if(employeeDTO == null) return ResponseEntity.notFound().build();
+        return employeeDTO.map(employeeDTO1 -> ResponseEntity.ok(employeeDTO1)).orElseThrow(() -> new ResourceNotFoundException("Employee not found with id: "+id));
     }
 
     @GetMapping
-    public List<EmployeeEntity> getAllEmployees(@RequestParam(required = false) Integer age){
-        return employeeRepository.findAll();
+    public ResponseEntity<List<EmployeeDTO>> getAllEmployees(@RequestParam(required = false) Integer age){
+        return ResponseEntity.ok(employeeService.getAllEmployees());
     }
 
     /*@PostMapping
@@ -41,13 +49,28 @@ public class EmployeeController {
     }*/
 
     @PostMapping
-    public EmployeeEntity createNewEmployee(@RequestBody EmployeeEntity inputEmployee){
-        return employeeRepository.save(inputEmployee);
+    public ResponseEntity<EmployeeDTO> createNewEmployee(@RequestBody @Valid EmployeeDTO inputEmployee){
+        EmployeeDTO savedEmployee = employeeService.createNewEmployee(inputEmployee);
+        return new ResponseEntity<>(savedEmployee, HttpStatus.CREATED);
     }
 
+    @PutMapping(path = "/{employeeId}")
+    public ResponseEntity<EmployeeDTO> updateEmployeeById(@RequestBody @Valid EmployeeDTO employeeDTO, @PathVariable Long employeeId) {
+        return  ResponseEntity.ok(employeeService.updateEmployeeById(employeeDTO, employeeId));
+    }
 
-    @PutMapping String updateEmployeeById() {
-        return  "Data is updated";
+    @DeleteMapping(path = "/{employeeId}")
+    public ResponseEntity<Boolean> deleteEmployeeById(@PathVariable Long employeeId) {
+       boolean gotDeleted = employeeService.deleteEmployeeById(employeeId);
+       if (gotDeleted) return ResponseEntity.ok(true);
+       return ResponseEntity.notFound().build();
+    }
+
+    @PatchMapping(path = "/{employeeId}")
+    public ResponseEntity<EmployeeDTO> patchEmployeeById(@RequestBody Map<String, Object> updates, @PathVariable Long employeeId) {
+        EmployeeDTO employeeDTO = employeeService.patchEmployeeById(updates,employeeId);
+        if (employeeDTO == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(employeeDTO);
     }
 
 }
