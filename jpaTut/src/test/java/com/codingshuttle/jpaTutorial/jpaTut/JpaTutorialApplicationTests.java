@@ -5,6 +5,7 @@ import com.codingshuttle.jpaTutorial.jpaTut.repositories.ProductRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -46,7 +47,7 @@ class JpaTutorialApplicationTests {
 
 	@Test
 	void getRepository3() {
-		List<ProductEntity> entities = productRepository.findByCreatedAtAfter(LocalDateTime.of(
+		List<ProductEntity> entities = productRepository.findByCreatedAtAfterOrderByTitle(LocalDateTime.of(
 				2024,1,1,0,0,0));
 		System.out.println(entities);
 	}
