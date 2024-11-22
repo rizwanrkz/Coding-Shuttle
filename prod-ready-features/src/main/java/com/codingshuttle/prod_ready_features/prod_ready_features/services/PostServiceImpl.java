@@ -1,6 +1,6 @@
 package com.codingshuttle.prod_ready_features.prod_ready_features.services;
 
-import com.codingshuttle.prod_ready_features.prod_ready_features.ResourceNotFoundException;
+import com.codingshuttle.prod_ready_features.prod_ready_features.exceptions.ResourceNotFoundException;
 import com.codingshuttle.prod_ready_features.prod_ready_features.dto.PostDTO;
 import com.codingshuttle.prod_ready_features.prod_ready_features.entities.PostEntity;
 import com.codingshuttle.prod_ready_features.prod_ready_features.repositories.PostRepository;
@@ -37,5 +37,14 @@ public class PostServiceImpl implements PostService {
                 findById(postId).
                 orElseThrow(() -> new ResourceNotFoundException("Post not found with id " + postId));
         return modelMapper.map(postEntity, PostDTO.class);
+    }
+
+    @Override
+    public PostDTO updatePost(PostDTO inputPost, Long postId) {
+        PostEntity oldPost = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Post not found with id " + postId));
+        inputPost.setId(String.valueOf(postId));
+        modelMapper.map(inputPost, oldPost);
+        PostEntity savedPostEntity = postRepository.save(oldPost);
+        return modelMapper.map(savedPostEntity, PostDTO.class);
     }
 }
