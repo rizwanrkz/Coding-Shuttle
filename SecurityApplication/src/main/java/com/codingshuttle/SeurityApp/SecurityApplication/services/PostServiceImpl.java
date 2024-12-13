@@ -2,15 +2,19 @@ package com.codingshuttle.SeurityApp.SecurityApplication.services;
 
 import com.codingshuttle.SeurityApp.SecurityApplication.dto.PostDTO;
 import com.codingshuttle.SeurityApp.SecurityApplication.entities.PostEntity;
+import com.codingshuttle.SeurityApp.SecurityApplication.entities.UserEntity;
 import com.codingshuttle.SeurityApp.SecurityApplication.exception.ResourceNotFoundException;
 import  com.codingshuttle.SeurityApp.SecurityApplication.repositories.PostRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service @RequiredArgsConstructor
 public class PostServiceImpl implements PostService{
 
@@ -34,6 +38,9 @@ public class PostServiceImpl implements PostService{
 
     @Override
     public PostDTO getPostById(Long postId) {
+        UserEntity user = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        log.info("user {}",user);
         PostEntity postEntity = postRepository
                 .findById(postId)
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found with id "+postId));
