@@ -1,5 +1,6 @@
 package com.codingshuttle.SeurityApp.SecurityApplication.config;
 
+import com.codingshuttle.SeurityApp.SecurityApplication.entities.enums.Permission;
 import com.codingshuttle.SeurityApp.SecurityApplication.filters.JwtAuthFilter;
 import com.codingshuttle.SeurityApp.SecurityApplication.handlers.OAuth2SuccessHandler;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +43,16 @@ public class WebSecurityConfiguration {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(publicRoutes).permitAll()
                         .requestMatchers(HttpMethod.GET, "/posts/**").permitAll()
-                        .requestMatchers("/posts/**").hasAnyRole(ADMIN.name(), CREATOR.name())
+                        .requestMatchers(HttpMethod.POST, "/posts/**")
+                         .hasAnyRole(ADMIN.name(), CREATOR.name())
+                        .requestMatchers(HttpMethod.POST, "/posts/**")
+                         .hasAuthority(Permission.POST_CREATE.name())
+                        .requestMatchers(HttpMethod.GET,"/posts/**")
+                         .hasAuthority(Permission.POST_VIEW.name())
+                        .requestMatchers(HttpMethod.PUT,"/posts/**")
+                        .hasAuthority(Permission.POST_UPDATE.name())
+                        .requestMatchers(HttpMethod.DELETE,"/posts/**")
+                        .hasAuthority(Permission.POST_DELETE.name())
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login(oauth2Config -> oauth2Config
