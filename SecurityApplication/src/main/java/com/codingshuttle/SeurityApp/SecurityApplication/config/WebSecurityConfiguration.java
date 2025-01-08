@@ -42,17 +42,7 @@ public class WebSecurityConfiguration {
         httpSecurity
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(publicRoutes).permitAll()
-                        .requestMatchers(HttpMethod.GET, "/posts/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/posts/**")
-                         .hasAnyRole(ADMIN.name(), CREATOR.name())
-                        .requestMatchers(HttpMethod.POST, "/posts/**")
-                         .hasAuthority(Permission.POST_CREATE.name())
-                        .requestMatchers(HttpMethod.GET,"/posts/**")
-                         .hasAuthority(Permission.POST_VIEW.name())
-                        .requestMatchers(HttpMethod.PUT,"/posts/**")
-                        .hasAuthority(Permission.POST_UPDATE.name())
-                        .requestMatchers(HttpMethod.DELETE,"/posts/**")
-                        .hasAuthority(Permission.POST_DELETE.name())
+                        .requestMatchers(HttpMethod.GET, "/posts/**").authenticated()
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login(oauth2Config -> oauth2Config
